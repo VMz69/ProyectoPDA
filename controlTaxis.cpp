@@ -24,9 +24,11 @@ struct Vehiculo
     int year;
 };
 
-void guardarVehiculo(const vector<Vehiculo>& taxis, const string& nombreArchivo) {
+void guardarVehiculo(const vector<Vehiculo> &taxis, const string &nombreArchivo)
+{
     ofstream archivo(nombreArchivo);
-    for (const auto& taxi : taxis) {
+    for (const auto &taxi : taxis)
+    {
         archivo << taxi.placa << " "
                 << taxi.marca << " "
                 << taxi.modelo << " "
@@ -35,6 +37,42 @@ void guardarVehiculo(const vector<Vehiculo>& taxis, const string& nombreArchivo)
     archivo.close();
 }
 
+void cargarVector(vector<Vehiculo> &listaTaxis, const string &nombreArchivo)
+{
+    ifstream archivo(nombreArchivo);
+    Vehiculo taxi;
+    while (archivo >> taxi.placa)
+    {
+        archivo >> taxi.marca;
+        archivo >> taxi.modelo;
+        archivo >> taxi.year;
+        listaTaxis.push_back(taxi);
+    }
+    archivo.close();
+}
+
+bool validarTaxiNuevo(const vector<Vehiculo> &listaTaxis, const string &placa, int year)
+{
+
+    // Validar si placa es Repetida
+    for (const Vehiculo &taxi : listaTaxis)
+    {
+        if (taxi.placa == placa)
+        {
+            cout << "taxi con placas " << placa << " ya existe" <<endl;
+            return false;
+        }
+    }
+
+    // validar año de vehiculo
+    if (year < 2011)
+    {
+        cout << "El año del vehiculo permitido es 2011 o superior" <<endl;
+        return false;
+    }
+
+    return true; // si ambas condiciones se cumplen
+}
 
 int main()
 {
@@ -45,10 +83,11 @@ int main()
     vector<Vehiculo> listaTaxis;
     Vehiculo taxi;
     string vehicleLabel[4] = {"1.Placa:", "2.Marca:", "3.Modelo:", "4.Año"};
-    string temp; //variable temporal para convertir año de vehiculo a tipo numerico
+    string temp; // variable temporal para convertir año de vehiculo a tipo numerico
+
+    cargarVector(listaTaxis, "taxis.txt");
 
     system("clear");
-
     do
     {
         cout << "BIENVENIDO AL SISTEMA DE GESTION DE TAXIS 'TRUE-DRIVER'!" << endl;
@@ -72,48 +111,42 @@ int main()
         switch (menu)
         {
         case 'a':
-        system("clear");
-                cout << "*****************************************************************************************\n";
-                cout << "Ingreso de nuevo Vehiculo.\n";
+            system("clear");
+            cout << "*****************************************************************************************\n";
+            cout << "Ingreso de nuevo Vehiculo.\n";
 
-                // imprime campos de Formulario//
-                for (int i = 0; i < 4; i++)
-                {
-                    gotoxy(3, 5 + i * 2);
-                    cout << vehicleLabel[i];
-                    gotoxy(18, 5 + i * 2);
-                    cout << "_______________________________";
-                };
-                cout << "\n \n";
+            // imprime campos/labels de Formulario//
+            for (int i = 0; i < 4; i++)
+            {
+                gotoxy(3, 5 + i * 2);
+                cout << vehicleLabel[i];
+                gotoxy(18, 5 + i * 2);
+                cout << "_______________________________";
+            };
+            cout << "\n \n";
 
-                
-                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // limpiar el buffer
-                
-                gotoxy(19,5);
-                getline(cin, taxi.placa);
-                gotoxy(19,7);
-                getline(cin, taxi.marca);
-                gotoxy(19,9);
-                getline(cin, taxi.modelo);
-                gotoxy(19,11);
-                getline(cin, temp);
-                taxi.year = stoi(temp);
-                cout << "\n \n";
-                listaTaxis.push_back(taxi); //subimos el taxi guardado al vector
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // limpiar el buffer
 
-                guardarVehiculo(listaTaxis, "taxis.txt"); //agregamos el vector actualizado al archivo txt
-                cout<<"Nuevo Taxi Registrado" <<endl;
-                cout<< taxi.placa << endl;
-                cout<< taxi.marca << endl;
-                cout<< taxi.modelo << endl;
-                cout<< taxi.year << endl;
-
-
-
-
-
-
-            
+            gotoxy(19, 5);
+            getline(cin, taxi.placa);
+            gotoxy(19, 7);
+            getline(cin, taxi.marca);
+            gotoxy(19, 9);
+            getline(cin, taxi.modelo);
+            gotoxy(19, 11);
+            getline(cin, temp);     // captura variable temporal para año
+            taxi.year = stoi(temp); // asigna variable real a la estructura
+            cout << "\n \n";
+            // validar año del taxi
+            // validar placa del taxi
+            if ( validarTaxiNuevo(listaTaxis, taxi.placa, taxi.year) )
+            {
+                listaTaxis.push_back(taxi); // subimos el taxi guardado al vector
+                guardarVehiculo(listaTaxis, "taxis.txt"); // agregamos el vector actualizado al archivo txt
+                cout << "Nuevo Taxi Registrado." << endl;
+            }else{
+                cout<<"El Registro no se ha podido guardar."<< endl;
+            }
 
             break;
 
@@ -151,6 +184,15 @@ int main()
 
         case 'g':
             system("clear");
+            cout << " " << endl;
+            cout << " " << endl;
+            cout << " " << endl;
+            cout << " " << endl;
+            cout << " " << endl;
+            cout << " " << endl;
+            cout << " " << endl;
+            cout << "Gracias por utilizar el sistema..." << endl;
+            exit(0);
             break;
         }
         cout << "Desea realizar otra operacion? Presione Cualquier Tecla, Salir presione n o N." << endl;

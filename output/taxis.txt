@@ -1,6 +1,0 @@
-P123 Toyota Yaris 2011
-P8899 Toyota Corolla 2013
-P7788 Chevrolet Spark 2015
-P88010808 Mazda 2 2011
-P8879 Honda Fit 2017
-P789877 Mazda 3 2012

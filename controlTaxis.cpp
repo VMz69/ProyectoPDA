@@ -10,12 +10,23 @@
 // #include <windows.h> //header para mover cursor en Windows
 using namespace std;
 
+struct Conductor{
+    string dui;
+    string nombre;
+    string telefono;
+    string direccion;
+};
+
+
 struct Vehiculo
 {
     string placa;
     string marca;
     string modelo;
     int year;
+    string categoria; // "Ejecutiva" o "Tradicional"
+    string estado;    // "Disponible" o "En ruta"
+    Conductor conductor;
 };
 
 // la funcion GOTOXY cambia de a Linux y Windows(en este caso se esta utilizando la funcion para Linux)
@@ -29,10 +40,13 @@ void guardarVehiculo(const vector<Vehiculo> &taxis, const string &nombreArchivo)
     ofstream archivo(nombreArchivo);
     for (const auto &taxi : taxis)
     {
-        archivo << taxi.placa << " "
-                << taxi.marca << " "
-                << taxi.modelo << " "
-                << taxi.year << endl;
+        archivo << "# Vehiculo" <<endl
+                << taxi.placa << endl
+                << taxi.marca << endl
+                << taxi.modelo << endl
+                << taxi.year << endl
+                << taxi.categoria << endl
+                << taxi.estado << endl << endl;
     }
     archivo.close();
 }
@@ -65,9 +79,9 @@ bool validarTaxiNuevo(const vector<Vehiculo> &listaTaxis, const string &placa, i
     }
 
     // validar año de vehiculo
-    if (year < 2011)
+    if (year < 2010)
     {
-        cout << "El año del vehiculo permitido es 2011 o superior" <<endl;
+        cout << "El año del vehiculo permitido es 2010 o superior" <<endl;
         return false;
     }
 
@@ -86,7 +100,7 @@ int main()
     string conductorLabel[4] = {"1.Documento de Identidad", "2.Nombre Completo:", "3.Telefono/Cel:", "4.Dirección"};
     string temp; // variable temporal para convertir año de vehiculo a tipo numerico
 
-    cargarVector(listaTaxis, "taxis.txt");
+    cargarVector(listaTaxis, "CARS_STORAGE.txt");
 
     system("clear");
     do
@@ -97,7 +111,7 @@ int main()
         cout << "Seleccione Una opcion Del menu que se presenta a continuacion:" << endl
              << endl;
         cout << "a. -- Registrar nuevo Taxi" << endl;
-        cout << "b. -- Registrar nuevo Conductor" << endl;
+        //cout << "b. -- Registrar nuevo Conductor" << endl;
         cout << "c. -- Enviar Taxi a cliente" << endl;
         cout << "d. -- Consulta de vehiculos en Ruta" << endl;
         cout << "e. -- Consulta de vehiculos disponibles" << endl;
@@ -138,16 +152,26 @@ int main()
             getline(cin, temp);     // captura variable temporal para año
             taxi.year = stoi(temp); // asigna variable real a la estructura
             cout << "\n \n";
-            // validar año del taxi
-            // validar placa del taxi
-            if ( validarTaxiNuevo(listaTaxis, taxi.placa, taxi.year) )
+            
+            if ( validarTaxiNuevo(listaTaxis, taxi.placa, taxi.year) ) //Validar año y placa del taxi
             {
                 listaTaxis.push_back(taxi); // subimos el taxi guardado al vector
-                guardarVehiculo(listaTaxis, "taxis.txt"); // agregamos el vector actualizado al archivo txt
+                guardarVehiculo(listaTaxis, "CARS_STORAGE.txt"); // agregamos el vector actualizado al archivo txt
                 cout << "Nuevo Taxi Registrado." << endl;
             }else{
                 cout<<"El Registro no se ha podido guardar."<< endl;
             }
+
+            //asignar categoria
+            if (taxi.year >= 2015)
+            {
+                taxi.categoria = "Ejecutiva";
+            } else {
+                taxi.categoria = "Tradicional";
+            }
+            
+            //asignar estado como disponible
+            taxi.estado = "Disponible";
 
             break;
 
@@ -222,7 +246,7 @@ int main()
             exit(0);
             break;
         }
-        cout << "Desea realizar otra operacion? Presione Cualquier Tecla, Salir presione n o N." << endl;
+        cout << "\n Desea realizar otra operacion? Presione Cualquier Tecla, Salir presione n o N." << endl;
         cin >> continuar;
         system("clear");
 

@@ -10,12 +10,6 @@
 // #include <windows.h> //header para mover cursor en Windows
 using namespace std;
 
-// la funcion GOTOXY cambia de a Linux y Windows(en este caso se esta utilizando la funcion para Linux)
-void gotoxy(int x, int y)
-{
-    cout << "\033[" << y << ";" << x << "H";
-}
-
 struct Vehiculo
 {
     string placa;
@@ -23,6 +17,12 @@ struct Vehiculo
     string modelo;
     int year;
 };
+
+// la funcion GOTOXY cambia de a Linux y Windows(en este caso se esta utilizando la funcion para Linux)
+void gotoxy(int x, int y)
+{
+    cout << "\033[" << y << ";" << x << "H";
+}
 
 void guardarVehiculo(const vector<Vehiculo> &taxis, const string &nombreArchivo)
 {
@@ -79,10 +79,11 @@ int main()
     // Variables a Utilizar: Opcion
     char menu;
     char continuar;
-    char resp;
+    //char resp;
     vector<Vehiculo> listaTaxis;
     Vehiculo taxi;
     string vehicleLabel[4] = {"1.Placa:", "2.Marca:", "3.Modelo:", "4.Año"};
+    string conductorLabel[4] = {"1.Documento de Identidad", "2.Nombre Completo:", "3.Telefono/Cel:", "4.Dirección"};
     string temp; // variable temporal para convertir año de vehiculo a tipo numerico
 
     cargarVector(listaTaxis, "taxis.txt");
@@ -152,6 +153,32 @@ int main()
 
         case 'b':
             system("clear");
+            cout << "*****************************************************************************************\n";
+            cout << "Ingreso de nuevo Conductor.\n";
+
+            // imprime campos/labels de Formulario//
+            for (int i = 0; i < 4; i++)
+            {
+                gotoxy(3, 5 + i * 2);
+                cout << conductorLabel[i];
+                gotoxy(30, 5 + i * 2);
+                cout << "____________________________________________________";
+            };
+            cout << "\n \n";
+
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // limpiar el buffer
+
+            gotoxy(31, 5);
+            cin>>temp;
+
+
+
+
+
+
+
+
+
             break;
 
         case 'c':

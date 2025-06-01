@@ -10,13 +10,13 @@
 // #include <windows.h> //header para mover cursor en Windows
 using namespace std;
 
-struct Conductor{
+struct Conductor
+{
     string dui;
     string nombre;
     string telefono;
     string direccion;
 };
-
 
 struct Vehiculo
 {
@@ -40,13 +40,19 @@ void guardarVehiculo(const vector<Vehiculo> &taxis, const string &nombreArchivo)
     ofstream archivo(nombreArchivo);
     for (const auto &taxi : taxis)
     {
-        archivo << "# Vehiculo" <<endl
+        archivo << "# Vehiculo" << endl
                 << taxi.placa << endl
                 << taxi.marca << endl
                 << taxi.modelo << endl
                 << taxi.year << endl
                 << taxi.categoria << endl
-                << taxi.estado << endl << endl;
+                << taxi.estado << endl
+                << "# Conductor" <<endl
+                << taxi.conductor.dui<<endl
+                << taxi.conductor.nombre<<endl
+                << taxi.conductor.telefono<<endl
+                << taxi.conductor.direccion<<endl
+                << endl;
     }
     archivo.close();
 }
@@ -55,13 +61,25 @@ void cargarVector(vector<Vehiculo> &listaTaxis, const string &nombreArchivo)
 {
     ifstream archivo(nombreArchivo);
     Vehiculo taxi;
-    while (archivo >> taxi.placa)
-    {
-        archivo >> taxi.marca;
-        archivo >> taxi.modelo;
-        archivo >> taxi.year;
-        listaTaxis.push_back(taxi);
+   
+    string linea; //para almacenar temporalmente cada línea leída
+
+    while (getline(archivo, linea)) {
+        if (linea == "# Vehiculo") {
+            getline(archivo, taxi.placa);
+            getline(archivo, taxi.marca);
+            getline(archivo, taxi.modelo);
+            string yearStr; //variable temporal para convertir año a int
+            getline(archivo, yearStr);
+            taxi.year = stoi(yearStr);
+            
+            getline(archivo, taxi.categoria);
+            getline(archivo, taxi.estado);
+            
+            listaTaxis.push_back(taxi);
+        }
     }
+
     archivo.close();
 }
 
@@ -73,7 +91,7 @@ bool validarTaxiNuevo(const vector<Vehiculo> &listaTaxis, const string &placa, i
     {
         if (taxi.placa == placa)
         {
-            cout << "taxi con placas " << placa << " ya existe" <<endl;
+            cout << "taxi con placas " << placa << " ya existe" << endl;
             return false;
         }
     }
@@ -81,7 +99,7 @@ bool validarTaxiNuevo(const vector<Vehiculo> &listaTaxis, const string &placa, i
     // validar año de vehiculo
     if (year < 2010)
     {
-        cout << "El año del vehiculo permitido es 2010 o superior" <<endl;
+        cout << "El año del vehiculo permitido es 2010 o superior" << endl;
         return false;
     }
 
@@ -93,7 +111,7 @@ int main()
     // Variables a Utilizar: Opcion
     char menu;
     char continuar;
-    //char resp;
+    // char resp;
     vector<Vehiculo> listaTaxis;
     Vehiculo taxi;
     string vehicleLabel[4] = {"1.Placa:", "2.Marca:", "3.Modelo:", "4.Año"};
@@ -110,15 +128,14 @@ int main()
         cout << "Ingrese la opción de la operacion que desea realizar:" << endl;
         cout << "Seleccione Una opcion Del menu que se presenta a continuacion:" << endl
              << endl;
-        cout << "a. -- Registrar nuevo Taxi" << endl;
-        //cout << "b. -- Registrar nuevo Conductor" << endl;
-        cout << "c. -- Enviar Taxi a cliente" << endl;
-        cout << "d. -- Consulta de vehiculos en Ruta" << endl;
-        cout << "e. -- Consulta de vehiculos disponibles" << endl;
+        cout << "a. -- Registrar nuevo Taxi y Conductor" << endl;
+        cout << "b. -- Enviar Taxi a cliente" << endl;
+        cout << "c. -- Consulta de vehiculos en Ruta" << endl;
+        cout << "d. -- Consulta de vehiculos disponibles" << endl;
         cout << "----------------------------------------------------\n"
              << endl;
-        cout << "f. -- VER REPORTES" << endl;
-        cout << "g. -- Salir\n"
+        cout << "e. -- VER REPORTES" << endl;
+        cout << "z. -- Salir\n"
              << endl;
         cout << "Ingrese la opcion seleccionada: ";
         cin >> menu;
@@ -126,8 +143,9 @@ int main()
         switch (menu)
         {
         case 'a':
+            //INGRESO DE TAXI NUEVO
             system("clear");
-            cout << "*****************************************************************************************\n";
+            cout << "**********************************************************************\n";
             cout << "Ingreso de nuevo Vehiculo.\n";
 
             // imprime campos/labels de Formulario//
@@ -152,26 +170,62 @@ int main()
             getline(cin, temp);     // captura variable temporal para año
             taxi.year = stoi(temp); // asigna variable real a la estructura
             cout << "\n \n";
-            
-            if ( validarTaxiNuevo(listaTaxis, taxi.placa, taxi.year) ) //Validar año y placa del taxi
-            {
-                listaTaxis.push_back(taxi); // subimos el taxi guardado al vector
-                guardarVehiculo(listaTaxis, "CARS_STORAGE.txt"); // agregamos el vector actualizado al archivo txt
-                cout << "Nuevo Taxi Registrado." << endl;
-            }else{
-                cout<<"El Registro no se ha podido guardar."<< endl;
-            }
 
-            //asignar categoria
+            // asignar categoria
             if (taxi.year >= 2015)
             {
                 taxi.categoria = "Ejecutiva";
-            } else {
+            }
+            else
+            {
                 taxi.categoria = "Tradicional";
             }
-            
-            //asignar estado como disponible
+            // asignar estado como disponible
             taxi.estado = "Disponible";
+
+            if (validarTaxiNuevo(listaTaxis, taxi.placa, taxi.year)) // Validar año y placa del taxi
+            {
+               cout<<"El registro de Taxi cumple con los requerimientos" <<endl;
+            }
+            else
+            {
+                cout << "El Registro no se ha podido guardar." << endl;
+                break;
+            }
+
+            //INGRESO DE CONDUCTOR ASOCIADO
+            system("clear");
+            cout << "**********************************************************************\n";
+            cout << "\n<<<Registro de Conductor Asociado a taxi con Placas>>> " <<"<<" << taxi.placa << ">>\n";
+            cout << "---------------------------------------------------------------------- \n";
+            cout << "\n";
+            // imprime campos/labels de Formulario//
+            for (int i = 0; i < 4; i++)
+            {
+                gotoxy(3, 8 + i * 2);
+                cout << conductorLabel[i];
+                gotoxy(30, 8 + i * 2);
+                cout << "_________________________________________________";
+            };
+
+            gotoxy(31, 8);
+            getline(cin, taxi.conductor.dui);
+            gotoxy(31, 10);
+            getline(cin, taxi.conductor.nombre);
+            gotoxy(31, 12);
+            getline(cin, taxi.conductor.telefono);
+            gotoxy(31, 14);
+            getline(cin, taxi.conductor.direccion);     
+            cout << "\n \n";
+
+            listaTaxis.push_back(taxi);                      // subimos el taxi guardado al vector
+            guardarVehiculo(listaTaxis, "CARS_STORAGE.txt"); // agregamos el vector actualizado al archivo txt
+
+            system("clear");
+            cout << "**********************************************************************\n";
+            cout<<"Nuevo Taxi registrado nexitosamente."<<endl;
+            cout<<"Placas:        "<< taxi.placa << endl;
+            cout<<"Conductor:     "<< taxi.conductor.nombre <<endl;
 
             break;
 
@@ -193,15 +247,7 @@ int main()
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); // limpiar el buffer
 
             gotoxy(31, 5);
-            cin>>temp;
-
-
-
-
-
-
-
-
+            cin >> temp;
 
             break;
 
@@ -233,7 +279,7 @@ int main()
             cout << "Ingrese la opcion seleccionada: ";
             break;
 
-        case 'g':
+        case 'z':
             system("clear");
             cout << " " << endl;
             cout << " " << endl;

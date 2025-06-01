@@ -64,18 +64,28 @@ void cargarVector(vector<Vehiculo> &listaTaxis, const string &nombreArchivo)
    
     string linea; //para almacenar temporalmente cada línea leída
 
-    while (getline(archivo, linea)) {
+   while (getline(archivo, linea)) {
         if (linea == "# Vehiculo") {
-            getline(archivo, taxi.placa);
-            getline(archivo, taxi.marca);
-            getline(archivo, taxi.modelo);
-            string yearStr; //variable temporal para convertir año a int
-            getline(archivo, yearStr);
+            if (!getline(archivo, taxi.placa)) break;
+            if (!getline(archivo, taxi.marca)) break;
+            if (!getline(archivo, taxi.modelo)) break;
+            string yearStr;//Variable Temporal para cargar el año del vehiculo como int
+            if (!getline(archivo, yearStr)) break;
             taxi.year = stoi(yearStr);
-            
-            getline(archivo, taxi.categoria);
-            getline(archivo, taxi.estado);
-            
+            if (!getline(archivo, taxi.categoria)) break;
+            if (!getline(archivo, taxi.estado)) break;
+
+            // Verificar que sigue el conductor
+            if (!getline(archivo, linea) || linea != "# Conductor") {
+                cerr << "Error: Se esperaba # Conductor" << endl;
+                break;
+            }
+            // Leer conductor
+            if (!getline(archivo, taxi.conductor.dui)) break;
+            if (!getline(archivo, taxi.conductor.nombre)) break;
+            if (!getline(archivo, taxi.conductor.telefono)) break;
+            if (!getline(archivo, taxi.conductor.direccion)) break;
+
             listaTaxis.push_back(taxi);
         }
     }

@@ -1,0 +1,26 @@
+# Vehiculo
+P123
+Hyudai
+Accent
+2011
+Tradicional
+Disponible
+# Conductor
+0123456789
+Juan Antonio Perez Lopez
+77564985
+San Jorge San Miguel
+
+# Vehiculo
+P789
+Toyota
+Corolla
+2010
+Tradicional
+Disponible
+# Conductor
+4564987
+Juanito Perez Mercado
+7898465465
+San Miguel
+

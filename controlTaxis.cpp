@@ -47,11 +47,11 @@ void guardarVehiculo(const vector<Vehiculo> &taxis, const string &nombreArchivo)
                 << taxi.year << endl
                 << taxi.categoria << endl
                 << taxi.estado << endl
-                << "# Conductor" <<endl
-                << taxi.conductor.dui<<endl
-                << taxi.conductor.nombre<<endl
-                << taxi.conductor.telefono<<endl
-                << taxi.conductor.direccion<<endl
+                << "# Conductor" << endl
+                << taxi.conductor.dui << endl
+                << taxi.conductor.nombre << endl
+                << taxi.conductor.telefono << endl
+                << taxi.conductor.direccion << endl
                 << endl;
     }
     archivo.close();
@@ -61,30 +61,43 @@ void cargarVector(vector<Vehiculo> &listaTaxis, const string &nombreArchivo)
 {
     ifstream archivo(nombreArchivo);
     Vehiculo taxi;
-   
-    string linea; //para almacenar temporalmente cada línea leída
 
-   while (getline(archivo, linea)) {
-        if (linea == "# Vehiculo") {
-            if (!getline(archivo, taxi.placa)) break;
-            if (!getline(archivo, taxi.marca)) break;
-            if (!getline(archivo, taxi.modelo)) break;
-            string yearStr;//Variable Temporal para cargar el año del vehiculo como int
-            if (!getline(archivo, yearStr)) break;
+    string linea; // para almacenar temporalmente cada línea leída
+
+    while (getline(archivo, linea))
+    {
+        if (linea == "# Vehiculo")
+        {
+            if (!getline(archivo, taxi.placa))
+                break;
+            if (!getline(archivo, taxi.marca))
+                break;
+            if (!getline(archivo, taxi.modelo))
+                break;
+            string yearStr; // Variable Temporal para cargar el año del vehiculo como int
+            if (!getline(archivo, yearStr))
+                break;
             taxi.year = stoi(yearStr);
-            if (!getline(archivo, taxi.categoria)) break;
-            if (!getline(archivo, taxi.estado)) break;
+            if (!getline(archivo, taxi.categoria))
+                break;
+            if (!getline(archivo, taxi.estado))
+                break;
 
             // Verificar que sigue el conductor
-            if (!getline(archivo, linea) || linea != "# Conductor") {
+            if (!getline(archivo, linea) || linea != "# Conductor")
+            {
                 cerr << "Error: Se esperaba # Conductor" << endl;
                 break;
             }
             // Leer conductor
-            if (!getline(archivo, taxi.conductor.dui)) break;
-            if (!getline(archivo, taxi.conductor.nombre)) break;
-            if (!getline(archivo, taxi.conductor.telefono)) break;
-            if (!getline(archivo, taxi.conductor.direccion)) break;
+            if (!getline(archivo, taxi.conductor.dui))
+                break;
+            if (!getline(archivo, taxi.conductor.nombre))
+                break;
+            if (!getline(archivo, taxi.conductor.telefono))
+                break;
+            if (!getline(archivo, taxi.conductor.direccion))
+                break;
 
             listaTaxis.push_back(taxi);
         }
@@ -121,7 +134,7 @@ int main()
     // Variables a Utilizar: Opcion
     char menu;
     char continuar;
-    // char resp;
+    char catSelecionada;
     vector<Vehiculo> listaTaxis;
     Vehiculo taxi;
     string vehicleLabel[4] = {"1.Placa:", "2.Marca:", "3.Modelo:", "4.Año"};
@@ -134,18 +147,19 @@ int main()
     do
     {
         cout << "BIENVENIDO AL SISTEMA DE GESTION DE TAXIS 'TRUE-DRIVER'!" << endl;
-        cout << "----------------------------------------------------" << endl;
-        cout << "Ingrese la opción de la operacion que desea realizar:" << endl;
-        cout << "Seleccione Una opcion Del menu que se presenta a continuacion:" << endl
+        cout << "------------------------------------------------------------------" << endl;
+        cout << " Ingrese la opción de la operacion que desea realizar:" << endl;
+        cout << " Seleccione Una opcion Del menu que se presenta a continuacion:" << endl
              << endl;
-        cout << "a. -- Registrar nuevo Taxi y Conductor" << endl;
-        cout << "b. -- Enviar Taxi a cliente" << endl;
-        cout << "c. -- Consulta de vehiculos en Ruta" << endl;
-        cout << "d. -- Consulta de vehiculos disponibles" << endl;
-        cout << "----------------------------------------------------\n"
+        cout << "\t a. -- Registrar nuevo Taxi y Conductor" << endl;
+        cout << "\t b. -- Enviar Taxi a cliente" << endl;
+        cout << "\t c. -- Reingresar Taxi a la cola de Espera" << endl;
+        cout << "\t d. -- Consulta de vehiculos en Ruta" << endl;
+        cout << "\t e. -- Consulta de vehiculos disponibles" << endl;
+        cout << "------------------------------------------------------------------\n"
              << endl;
-        cout << "e. -- VER REPORTES" << endl;
-        cout << "z. -- Salir\n"
+        cout << "\t f. -- VER REPORTES" << endl;
+        cout << "\t z. -- Salir\n"
              << endl;
         cout << "Ingrese la opcion seleccionada: ";
         cin >> menu;
@@ -153,7 +167,7 @@ int main()
         switch (menu)
         {
         case 'a':
-            //INGRESO DE TAXI NUEVO
+            // INGRESO DE TAXI NUEVO
             system("clear");
             cout << "**********************************************************************\n";
             cout << "Ingreso de nuevo Vehiculo.\n";
@@ -195,7 +209,7 @@ int main()
 
             if (validarTaxiNuevo(listaTaxis, taxi.placa, taxi.year)) // Validar año y placa del taxi
             {
-               cout<<"El registro de Taxi cumple con los requerimientos" <<endl;
+                cout << "El registro de Taxi cumple con los requerimientos" << endl;
             }
             else
             {
@@ -203,10 +217,10 @@ int main()
                 break;
             }
 
-            //INGRESO DE CONDUCTOR ASOCIADO
+            // INGRESO DE CONDUCTOR ASOCIADO
             system("clear");
             cout << "**********************************************************************\n";
-            cout << "\n<<<Registro de Conductor Asociado a taxi con Placas>>> " <<"<<" << taxi.placa << ">>\n";
+            cout << "\n<<<Registro de Conductor Asociado a taxi con Placas>>> " << "<<" << taxi.placa << ">>\n";
             cout << "---------------------------------------------------------------------- \n";
             cout << "\n";
             // imprime campos/labels de Formulario//
@@ -225,7 +239,7 @@ int main()
             gotoxy(31, 12);
             getline(cin, taxi.conductor.telefono);
             gotoxy(31, 14);
-            getline(cin, taxi.conductor.direccion);     
+            getline(cin, taxi.conductor.direccion);
             cout << "\n \n";
 
             listaTaxis.push_back(taxi);                      // subimos el taxi guardado al vector
@@ -233,31 +247,71 @@ int main()
 
             system("clear");
             cout << "**********************************************************************\n";
-            cout<<"Nuevo Taxi registrado nexitosamente."<<endl;
-            cout<<"Placas:        "<< taxi.placa << endl;
-            cout<<"Conductor:     "<< taxi.conductor.nombre <<endl;
+            cout << "Nuevo Taxi registrado nexitosamente." << endl;
+            cout << "Placas:        " << taxi.placa << endl;
+            cout << "Conductor:     " << taxi.conductor.nombre << endl;
 
             break;
 
         case 'b':
             system("clear");
-            cout << "*****************************************************************************************\n";
-            cout << "Ingreso de nuevo Conductor.\n";
+            cout << "Seleccione la categoría del Taxi Solicitado por cliente:" << endl;
 
-            // imprime campos/labels de Formulario//
-            for (int i = 0; i < 4; i++)
+            cout << "\n \t • a. \t Ejecutiva";
+            cout << "\n \t • b. \t Tradicional" << endl;
+            cout << "\nIngrese la opcion seleccionada: ";
+            cin >> catSelecionada;
+
+            cout<<"---------------------------------------------------------"<<endl;
+            cout<<"\n";
+            switch(catSelecionada)
             {
-                gotoxy(3, 5 + i * 2);
-                cout << conductorLabel[i];
-                gotoxy(30, 5 + i * 2);
-                cout << "____________________________________________________";
-            };
-            cout << "\n \n";
+            case 'a': // Ejecutiva
+            {
+                bool taxiEncontrado = false;
+                for (auto &taxi : listaTaxis)
+                {
+                    if (taxi.categoria == "Ejecutiva" && taxi.estado == "Disponible")
+                    {
+                        taxi.estado = "En ruta";
+                        cout << "\nTaxi de línea Ejecutiva Enviado. con numero de Placas:" << taxi.placa <<endl;
+                        cout << "Conductor: "<<taxi.conductor.nombre;
+                        taxiEncontrado = true;
+                        break;
+                    }
+                }
+                if (!taxiEncontrado)
+                {
+                    cout << "No hay Taxis Ejecutivos disponibles por el momento";
+                }
 
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // limpiar el buffer
+                guardarVehiculo(listaTaxis, "CARS_STORAGE.txt"); // actualiza archivo
+                break;
+            }
 
-            gotoxy(31, 5);
-            cin >> temp;
+            case 'b': // Tradicional
+            {
+                bool taxiEncontrado = false;
+                for (auto &taxi : listaTaxis)
+                {
+                    if (taxi.categoria == "Tradicional" && taxi.estado == "Disponible")
+                    {
+                        taxi.estado = "En ruta";
+                        cout << "\nTaxi de línea Tradicional Enviado. con numero de Placas:" << taxi.placa <<endl;
+                        cout << "Conductor: "<<taxi.conductor.nombre;
+                        taxiEncontrado = true;
+                        break;
+                    }
+                }
+                if (!taxiEncontrado)
+                {
+                    cout << "No hay Taxis Tradicionales disponibles por el momento";
+                }
+
+                guardarVehiculo(listaTaxis, "CARS_STORAGE.txt"); // actualiza archivo
+                break;
+            }
+            }
 
             break;
 
@@ -302,7 +356,7 @@ int main()
             exit(0);
             break;
         }
-        cout << "\n Desea realizar otra operacion? Presione Cualquier Tecla, Salir presione n o N." << endl;
+        cout << "\n \nDesea realizar otra operacion? Presione Cualquier Tecla, Salir presione n o N." << endl;
         cin >> continuar;
         system("clear");
 

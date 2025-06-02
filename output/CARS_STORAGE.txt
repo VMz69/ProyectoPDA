@@ -4,7 +4,7 @@ Toyota
 Yaris
 2018
 Ejecutiva
-Disponible
+En ruta
 # Conductor
 123456789
 Juan Antonio Perez Ramos
@@ -12,43 +12,17 @@ Juan Antonio Perez Ramos
 San Miguel
 
 # Vehiculo
-P66023
-Chevrolet
-Spark S
-2010
-Tradicional
-Disponible
-# Conductor
-123164978
-Jorge Mario Antonio Juarez
-7788-9933
-Soyapango
-
-# Vehiculo
 P221113
 Honda
 Fit
 2013
 Tradicional
-Disponible
+En ruta
 # Conductor
 79784651
 Jaime Fernando Henriquez
 7799-8822
 Santa Ana
-
-# Vehiculo
-P029384
-Nissan
-Versa
-2021
-Ejecutiva
-Disponible
-# Conductor
-79846513
-Francisco Jimenez Hernandez
-7785-6430
-Usulutan
 
 # Vehiculo
 P880698
@@ -69,10 +43,36 @@ Hyudai
 Accent
 2015
 Ejecutiva
-Disponible
+En ruta
 # Conductor
 789456123
 Juan Antonio Bermudez Lopez
 77889944
 San Salvador
+
+# Vehiculo
+P66023
+Chevrolet
+Spark S
+2010
+Tradicional
+Disponible
+# Conductor
+123164978
+Jorge Mario Antonio Juarez
+7788-9933
+Soyapango
+
+# Vehiculo
+P029384
+Nissan
+Versa
+2021
+Ejecutiva
+En ruta
+# Conductor
+79846513
+Francisco Jimenez Hernandez
+7785-6430
+Usulutan
 

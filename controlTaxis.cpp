@@ -331,7 +331,7 @@ int main()
                         gotoxy(31, 16);
                         getline(cin, viaje.fechaViaje);
                         viaje.placa = taxi.placa;
-                        viaje.conductor = taxi.conductor.nombre; 
+                        viaje.conductor = taxi.conductor.dui; 
                         viaje.hora = obtenerHoraActual();
                         transacciones.push_back(viaje);//carga info al vector
                         

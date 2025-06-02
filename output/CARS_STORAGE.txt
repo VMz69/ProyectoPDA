@@ -1,30 +1,4 @@
 # Vehiculo
-P880698
-Mazda
-2
-2011
-Tradicional
-En ruta
-# Conductor
-053809712
-Victor Emmanuel Velasco Martinez
-77209159
-Cojutepeque Cuscatlan Sur, Cuscatlan, El Salvador
-
-# Vehiculo
-P789
-Hyudai
-Accent
-2015
-Ejecutiva
-En ruta
-# Conductor
-789456123
-Juan Antonio Bermudez Lopez
-77889944
-San Salvador
-
-# Vehiculo
 P777799
 Toyota
 Yaris
@@ -75,4 +49,30 @@ Disponible
 Francisco Jimenez Hernandez
 7785-6430
 Usulutan
+
+# Vehiculo
+P880698
+Mazda
+2
+2011
+Tradicional
+Disponible
+# Conductor
+053809712
+Victor Emmanuel Velasco Martinez
+77209159
+Cojutepeque Cuscatlan Sur, Cuscatlan, El Salvador
+
+# Vehiculo
+P789
+Hyudai
+Accent
+2015
+Ejecutiva
+Disponible
+# Conductor
+789456123
+Juan Antonio Bermudez Lopez
+77889944
+San Salvador
 

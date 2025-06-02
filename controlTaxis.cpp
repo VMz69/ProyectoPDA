@@ -198,6 +198,36 @@ bool validarTaxiNuevo(const vector<Vehiculo> &listaTaxis, const string &placa, i
 
     return true; // si ambas condiciones se cumplen
 }
+
+void reingresarTaxi(vector<Vehiculo> &listaTaxis, const string &placaBuscada)
+{
+    Vehiculo taxi;
+    bool taxiEncontrado = false;
+    for (size_t i = 0; i < listaTaxis.size(); ++i)//size_t es como int pero solo con valores positivos
+    {
+        if (listaTaxis[i].placa == placaBuscada && listaTaxis[i].estado == "En ruta")
+        {
+            listaTaxis[i].estado = "Disponible"; // Cambiar el estado
+
+            Vehiculo taxiReingresado = listaTaxis[i]; // Copiar
+            listaTaxis.erase(listaTaxis.begin() + i); // Eliminar
+            listaTaxis.push_back(taxiReingresado);    // Agregar al final
+            guardarVehiculo(listaTaxis, "CARS_STORAGE.txt");
+            system("clear");
+            cout << "**********************************************************************************\n";
+            cout << "Taxi con placa " << placaBuscada << " reingresado como Disponible y enviado al final de la cola.\n";
+            taxiEncontrado = true;
+            break;
+        }
+    }
+    if (!taxiEncontrado)
+    {
+        system("clear");
+        cout << "**************************************************************************************\n";
+        cout << "El Taxi " <<placaBuscada<< " no coincide con Registros. o ya se encuentra en base y Disponible";
+    }
+}
+
 //**************************************************************************************************************************//
 //--------------------------------------------------------------------------------------------------------------------------//
 //**************************************************************************************************************************//
@@ -214,6 +244,7 @@ int main()
     string vehicleLabel[4] = {"1.Placa:", "2.Marca:", "3.Modelo:", "4.Año:"};
     string conductorLabel[4] = {"1.Documento de Identidad:", "2.Nombre Completo:", "3.Telefono/Cel:", "4.Dirección:"};
     string transacLabel[4] = {"Origen del viaje:", "Destino del viaje:", "Tarifa establecida:", "Fecha del viaje:"};
+    string placaReingreso; // Placa para reingresar taxi a cola
     // variables temporales
     string temp;     // convertir año de vehiculo a tipo numerico
     string temp2;    // convertir tarifa a float
@@ -509,6 +540,11 @@ int main()
 
         case 'c':
             system("clear");
+            cout << "*************************************************************************************\n";
+            cout << "\n--- Ingrese la Placa del vehiculo que desea Reingresar a la Cola de espera ---" << endl;
+            cout << "\n--- (sin espacios ni guiones) ---" << endl <<endl;
+            cin >> placaReingreso;
+            reingresarTaxi(listaTaxis, placaReingreso);
             break;
 
         case 'd':

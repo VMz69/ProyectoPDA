@@ -6,6 +6,8 @@
 #include <fstream>
 #include <filesystem>
 #include <vector>
+#include <ctime> //libreria para manejar hora
+#include <sstream> //libreria para manejar hora
 
 // #include <windows.h> //header para mover cursor en Windows
 using namespace std;
@@ -29,10 +31,29 @@ struct Vehiculo
     Conductor conductor;
 };
 
+struct Transaction
+{
+    string placa;
+    string conductor;
+    string origenDestino;
+    float tarifa;
+    string fechaViaje;
+    string hora;
+};
+
 // la funcion GOTOXY cambia de a Linux y Windows(en este caso se esta utilizando la funcion para Linux)
 void gotoxy(int x, int y)
 {
     cout << "\033[" << y << ";" << x << "H";
+}
+
+std::string obtenerHoraActual() { //obtiene la hora actual ya convertida a string
+    std::time_t tiempo = std::time(nullptr);
+    std::tm* horaLocal = std::localtime(&tiempo);
+
+    std::ostringstream oss;
+    oss << std::put_time(horaLocal, "%H:%M:%S");
+    return oss.str();
 }
 
 void guardarVehiculo(const vector<Vehiculo> &taxis, const string &nombreArchivo)
@@ -128,7 +149,9 @@ bool validarTaxiNuevo(const vector<Vehiculo> &listaTaxis, const string &placa, i
 
     return true; // si ambas condiciones se cumplen
 }
-
+//**************************************************************************************************************************//
+//--------------------------------------------------------------------------------------------------------------------------//
+//**************************************************************************************************************************//
 int main()
 {
     // Variables a Utilizar: Opcion
@@ -136,10 +159,14 @@ int main()
     char continuar;
     char catSelecionada;
     vector<Vehiculo> listaTaxis;
+    vector<Transaction> transacciones;
     Vehiculo taxi;
-    string vehicleLabel[4] = {"1.Placa:", "2.Marca:", "3.Modelo:", "4.Año"};
-    string conductorLabel[4] = {"1.Documento de Identidad", "2.Nombre Completo:", "3.Telefono/Cel:", "4.Dirección"};
-    string temp; // variable temporal para convertir año de vehiculo a tipo numerico
+    Transaction viaje;
+    string vehicleLabel[4] = {"1.Placa:", "2.Marca:", "3.Modelo:", "4.Año:"};
+    string conductorLabel[4] = {"1.Documento de Identidad:", "2.Nombre Completo:", "3.Telefono/Cel:", "4.Dirección:"};
+    string transacLabel[4] = {"Origen del viaje:", "Destino del viaje:", "Tarifa establecida:", "Fecha del viaje:"};
+    string temp;  // variable temporal para convertir año de vehiculo a tipo numerico
+    string temp2; // variable temporal para convertir tarifa a float
 
     cargarVector(listaTaxis, "CARS_STORAGE.txt");
 
@@ -254,6 +281,7 @@ int main()
             break;
 
         case 'b':
+
             system("clear");
             cout << "Seleccione la categoría del Taxi Solicitado por cliente:" << endl;
 
@@ -262,54 +290,109 @@ int main()
             cout << "\nIngrese la opcion seleccionada: ";
             cin >> catSelecionada;
 
-            cout<<"---------------------------------------------------------"<<endl;
-            cout<<"\n";
-            switch(catSelecionada)
+            cout << "---------------------------------------------------------" << endl;
+            cout << "\n";
+            switch (catSelecionada)
             {
             case 'a': // Ejecutiva
             {
-                bool taxiEncontrado = false;
+                // enviaTaxi(listaTaxis,"Ejecutiva"); //Envia Taxi segun categoria, actualiza estado en vector, guardar log
+                // Seleccionar Taxi
+
                 for (auto &taxi : listaTaxis)
                 {
                     if (taxi.categoria == "Ejecutiva" && taxi.estado == "Disponible")
                     {
-                        taxi.estado = "En ruta";
-                        cout << "\nTaxi de línea Ejecutiva Enviado. con numero de Placas:" << taxi.placa <<endl;
-                        cout << "Conductor: "<<taxi.conductor.nombre;
-                        taxiEncontrado = true;
-                        break;
+                        system("clear");
+                        cout << "**********************************************************************\n";
+                        cout << "\n<<<Asignacion de viaje para vehiculo con placas>>> " << "<<" << taxi.placa << ">>\n";
+                        cout << "\n<<<Conductor:>>> " << "<<" << taxi.conductor.nombre << ">>\n";
+                        cout << "\n<<<Linea:>>> " << "<<" << taxi.categoria << ">>\n";
+                        cout << "---------------------------------------------------------------------- \n";
+                        cout << "\n";
+                        // imprime campos/labels de Formulario//
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // limpiar el buffer
+                        for (int i = 0; i < 4; i++)
+                        {
+                            gotoxy(3, 10 + i * 2);
+                            cout << transacLabel[i];
+                            gotoxy(30, 10 + i * 2);
+                            cout << "_________________________________________";
+                        };
+                        //captura de datos
+                        gotoxy(31, 10);
+                        getline(cin, viaje.origenDestino);
+                        gotoxy(31, 12);
+                        getline(cin, temp2);
+                        viaje.origenDestino = viaje.origenDestino + " - " + temp2;
+                        gotoxy(31, 14);
+                        getline(cin, temp2);        // captura variable temporal para año
+                        viaje.tarifa = stoi(temp2); // asigna variable real a la estructura
+                        gotoxy(31, 16);
+                        getline(cin, viaje.fechaViaje);
+                        viaje.placa = taxi.placa;
+                        viaje.conductor = taxi.conductor.nombre; 
+                        viaje.hora = obtenerHoraActual();
+                        transacciones.push_back(viaje);//carga info al vector
+                        
+                        break; // sale del if y del bucle
                     }
                 }
-                if (!taxiEncontrado)
-                {
-                    cout << "No hay Taxis Ejecutivos disponibles por el momento";
-                }
+                // Bucle que imprime cada transacción //SOLO PARA CONTROL DE DATOS PROCESADOS
+                        for (const auto &viaje : transacciones)
+                        {
+                            cout << "\n--- Datos del Viaje ---" << endl;
+                            cout << "Placa: " << viaje.placa << endl;
+                            cout << "Conductor: " << viaje.conductor << endl;
+                            cout << "Ruta: " << viaje.origenDestino << endl;
+                            cout << "Tarifa: $ / " << viaje.tarifa << endl;
+                            cout << "Fecha: " << viaje.fechaViaje << endl;
+                            cout << "Hora: " << viaje.hora << endl;
+                        }
 
-                guardarVehiculo(listaTaxis, "CARS_STORAGE.txt"); // actualiza archivo
-                break;
+
+                // bool taxiEncontrado = false;
+                // for (auto &taxi : listaTaxis)
+                // {
+                //     if (taxi.categoria == "Ejecutiva" && taxi.estado == "Disponible")
+                //     {
+                //         taxi.estado = "En ruta";
+                //         cout << "\nTaxi de línea Ejecutiva Enviado. con numero de Placas:" << taxi.placa << endl;
+                //         cout << "Conductor: " << taxi.conductor.nombre;
+                //         taxiEncontrado = true;
+                //         break;
+                //     }
+                // }
+                // if (!taxiEncontrado)
+                // {
+                //     cout << "No hay Taxis Ejecutivos disponibles por el momento";
+                // }
+
+                // guardarVehiculo(listaTaxis, "CARS_STORAGE.txt"); // actualiza archivo
+                // break;
             }
 
             case 'b': // Tradicional
             {
-                bool taxiEncontrado = false;
-                for (auto &taxi : listaTaxis)
-                {
-                    if (taxi.categoria == "Tradicional" && taxi.estado == "Disponible")
-                    {
-                        taxi.estado = "En ruta";
-                        cout << "\nTaxi de línea Tradicional Enviado. con numero de Placas:" << taxi.placa <<endl;
-                        cout << "Conductor: "<<taxi.conductor.nombre;
-                        taxiEncontrado = true;
-                        break;
-                    }
-                }
-                if (!taxiEncontrado)
-                {
-                    cout << "No hay Taxis Tradicionales disponibles por el momento";
-                }
+                // bool taxiEncontrado = false;
+                // for (auto &taxi : listaTaxis)
+                // {
+                //     if (taxi.categoria == "Tradicional" && taxi.estado == "Disponible")
+                //     {
+                //         taxi.estado = "En ruta";
+                //         cout << "\nTaxi de línea Tradicional Enviado. con numero de Placas:" << taxi.placa << endl;
+                //         cout << "Conductor: " << taxi.conductor.nombre;
+                //         taxiEncontrado = true;
+                //         break;
+                //     }
+                // }
+                // if (!taxiEncontrado)
+                // {
+                //     cout << "No hay Taxis Tradicionales disponibles por el momento";
+                // }
 
-                guardarVehiculo(listaTaxis, "CARS_STORAGE.txt"); // actualiza archivo
-                break;
+                // guardarVehiculo(listaTaxis, "CARS_STORAGE.txt"); // actualiza archivo
+                // break;
             }
             }
 

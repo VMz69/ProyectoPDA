@@ -6,8 +6,9 @@
 #include <fstream>
 #include <filesystem>
 #include <vector>
-#include <ctime>   //libreria para manejar hora
-#include <sstream> //libreria para manejar hora
+#include <ctime>         //libreria para manejar hora
+#include <sstream>       //libreria para manejar hora
+#include <unordered_set> // almacena elementos únicos sin orden específico,
 #include "Textable.h"
 
 // #include <windows.h> //header para mover cursor en Windows
@@ -623,7 +624,8 @@ int main()
         {
             system("clear");
             bool salirReportes = false;
-
+            string tarifaString;
+            unordered_set<string> placas_con_viajes; // Almacena placas con al menos 1 viaje
             do
             {
                 cout << "*********************************Reportes***********************************" << endl;
@@ -643,7 +645,56 @@ int main()
                 switch (menu2)
                 {
                 case 'a':
-                    // Código para opción a
+
+                    system("clear");
+                    cout << "*************************************************************************************\n";
+                    cout << "\n--- *Viajes realizados por cada vehículo* ---" << endl
+                         << endl;
+
+                    // Paso 1: Identificar todas las placas que tienen viajes
+                    for (const auto &viaje : transacciones)
+                    {
+                        placas_con_viajes.insert(viaje.placa); // Si la placa ya está, no se duplica
+                    }
+
+                    // Paso 2: Mostrar solo taxis con viajes
+                    for (const auto &taxi : listaTaxis)
+                    {
+                        // Si el taxi NO tiene viajes, lo saltamos
+                        if (placas_con_viajes.find(taxi.placa) == placas_con_viajes.end())
+                        {
+                            continue;
+                        }
+
+                        // Mostrar info del taxi (solo si tiene viajes)
+                        cout << "Viajes realizados por Taxi con placas: " << taxi.placa << endl;
+                        cout << "Conductor: " << taxi.conductor.nombre << endl;
+
+                        // Crear tabla para los viajes de ESTE taxi
+                        TextTable tabla('-', '|', '+');
+                        tabla.add("Categoria");
+                        tabla.add("       Ruta");
+                        tabla.add("Tarifa");
+                        tabla.add("Fecha");
+                        tabla.endOfRow();
+
+                        // Filtrar y mostrar solo los viajes de este taxi
+                        for (const auto &viaje : transacciones)
+                        {
+                            if (viaje.placa == taxi.placa)
+                            {
+                                tabla.add(taxi.categoria);
+                                tabla.add(viaje.origenDestino);
+                                tabla.add(to_string(viaje.tarifa)); // Usa tu función para 2 decimales
+                                tabla.add(viaje.fechaViaje);
+                                tabla.endOfRow();
+                            }
+                        }
+
+                        cout << tabla << endl
+                             << endl;
+                    }
+
                     break;
                 case 'b':
                     // Código para opción b
@@ -682,7 +733,6 @@ int main()
 
             // Al salir del bucle de reportes, continuará con el bucle principal
             continue; // Esto hace que salte directamente a la siguiente iteración del bucle principal
-            
         }
         break;
 

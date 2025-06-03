@@ -230,6 +230,30 @@ void reingresarTaxi(vector<Vehiculo> &listaTaxis, const string &placaBuscada)
     }
 }
 
+void gananciasMesY(vector<Transaction> &viajes, string &yearMes)
+{
+    string fechaFormateada = "MES: " + yearMes.substr(6, 7) + " DEL AÑO " + yearMes.substr(0, 4); // Extrae Año y mes y reordena a mes - Año
+
+    system("clear");
+    cout << "*******************************************************************\n";
+    cout << "REPORTE DE INGRESOS PARA EL MES: " << fechaFormateada << "\n";
+    cout << "*******************************************************************\n\n";
+
+    float total = 0.0;
+
+    for (const auto &viaje : viajes)
+    {
+        string fecha = viaje.fechaViaje.substr(0, 7); // Extrae "YYYY-MM"
+        if (fecha == yearMes)
+        {
+            total += viaje.tarifa;
+        }
+    }
+
+    cout << fixed << setprecision(2);
+    cout << "Total de ingresos para el " << fechaFormateada << " :    $" << total << "\n";
+}
+
 //**************************************************************************************************************************//
 //--------------------------------------------------------------------------------------------------------------------------//
 //**************************************************************************************************************************//
@@ -763,7 +787,22 @@ int main()
 
                     break;
                 case 'c':
-                    // Código para opción c
+                    tempYear = ""; // reset variables a utilizar
+                    tempMes = "";
+                    temp2 = "";
+                    system("clear");
+                    cout << "********************Ingresos totales obtenidos en un mes********************\n";
+                    cout << "\n--- Ingrese el mes y el año que desea Buscar para generar Reporte ---" << endl;
+                    cout << "\n \nMes: ___      Año: _____       |       Formato Requerido: 00 0000" << endl;
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // limpiar el buffer
+                    gotoxy(7, 6);
+                    cin >> tempMes;
+                    gotoxy(21, 6);
+                    cin >> tempYear;
+                    temp2 = tempYear + "-" + tempMes; // formamos el mesYear para la consulta
+
+                    gananciasMesY(transacciones, temp2);
+
                     break;
                 case 'd':
                     // Código para opción d

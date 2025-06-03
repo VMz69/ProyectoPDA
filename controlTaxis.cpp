@@ -85,13 +85,13 @@ void guardarViaje(const vector<Transaction> &viajes, const string &nombreArchivo
     ofstream archivo(nombreArchivo);
     for (const auto &viaje : viajes)
     {
-        archivo << "\n# Transaccion Numero : " << endl
+        archivo << "# Transaccion Numero : " << endl
                 << viaje.placa << ","
                 << viaje.conductor << ","
                 << viaje.origenDestino << ","
                 << viaje.tarifa << ","
                 << viaje.fechaViaje << ","
-                << viaje.hora
+                << viaje.hora << endl
                 << endl;
     }
     archivo.close();
@@ -236,6 +236,7 @@ int main()
 {
     // Variables a Utilizar: Opcion
     char menu;
+    char menu2;
     char continuar;
     char catSelecionada;
     vector<Vehiculo> listaTaxis;
@@ -245,8 +246,8 @@ int main()
     string vehicleLabel[4] = {"1.Placa:", "2.Marca:", "3.Modelo:", "4.Año:"};
     string conductorLabel[4] = {"1.Documento de Identidad:", "2.Nombre Completo:", "3.Telefono/Cel:", "4.Dirección:"};
     string transacLabel[4] = {"Origen del viaje:", "Destino del viaje:", "Tarifa establecida:", "Fecha del viaje:"};
-    string placaReingreso; // Placa para reingresar taxi a cola
-    TextTable tabla('-', '|', '+'); //creacion de tabla con bordes y vacia
+    string placaReingreso;          // Placa para reingresar taxi a cola
+    TextTable tabla('-', '|', '+'); // creacion de tabla con bordes y vacia
     // variables temporales
     string temp;     // convertir año de vehiculo a tipo numerico
     string temp2;    // convertir tarifa a float
@@ -552,84 +553,138 @@ int main()
         case 'd': // CONSULTA VEHICULOS EN RUTA
             system("clear");
             cout << "*************************************************************************************\n";
-            cout << "\n--- *Vehiculos En Ruta* ---" << endl <<endl;
-            tabla = TextTable('-', '|', '+'); //resetea la tabla
+            cout << "\n--- *Vehiculos En Ruta* ---" << endl
+                 << endl;
+            tabla = TextTable('-', '|', '+'); // resetea la tabla
             tabla.add("Placa");
-            //tabla.add("Marca");
+            // tabla.add("Marca");
             tabla.add("Modelo");
             tabla.add("Year");
             tabla.add("  Conductor");
             tabla.add("Categoria");
             tabla.add("  En ruta");
-            tabla.endOfRow(); 
+            tabla.endOfRow();
 
-                for (auto &taxi : listaTaxis)
+            for (auto &taxi : listaTaxis)
+            {
+                if (taxi.estado == "En ruta")
                 {
-                    if (taxi.estado == "En ruta")
+                    for (auto &viaje : transacciones)
                     {
-                        for (auto &viaje : transacciones){
-                            if (taxi.placa == viaje.placa)
-                            {
-                                temp2 = viaje.origenDestino;
-                            }
+                        if (taxi.placa == viaje.placa)
+                        {
+                            temp2 = viaje.origenDestino;
                         }
-                        tabla.add(taxi.placa);
-                        //tabla.add(taxi.marca);
-                        tabla.add(taxi.modelo);
-                        tabla.add(to_string(taxi.year));
-                        tabla.add(taxi.conductor.nombre);
-                        tabla.add(taxi.categoria);
-                        tabla.add(temp2);
-                        tabla.endOfRow();
                     }
+                    tabla.add(taxi.placa);
+                    // tabla.add(taxi.marca);
+                    tabla.add(taxi.modelo);
+                    tabla.add(to_string(taxi.year));
+                    tabla.add(taxi.conductor.nombre);
+                    tabla.add(taxi.categoria);
+                    tabla.add(temp2);
+                    tabla.endOfRow();
                 }
+            }
             cout << tabla;
             break;
 
         case 'e': // CONSULTA VEHICULOS DISPONIBLES
             system("clear");
             cout << "*************************************************************************************\n";
-            cout << "\n--- *Vehiculos Disponibles para viaje* ---" << endl <<endl;
-            tabla = TextTable('-', '|', '+'); //resetea la tabla
+            cout << "\n--- *Vehiculos Disponibles para viaje* ---" << endl
+                 << endl;
+            tabla = TextTable('-', '|', '+'); // resetea la tabla
             tabla.add("Placa");
             tabla.add("Marca");
             tabla.add("Modelo");
             tabla.add("Year");
             tabla.add("  Conductor");
             tabla.add("Categoria");
-            tabla.endOfRow(); 
+            tabla.endOfRow();
 
-                for (auto &taxi : listaTaxis)
+            for (auto &taxi : listaTaxis)
+            {
+                if (taxi.estado == "Disponible")
                 {
-                    if (taxi.estado == "Disponible")
-                    {
-                        tabla.add(taxi.placa);
-                        tabla.add(taxi.marca);
-                        tabla.add(taxi.modelo);
-                        tabla.add(to_string(taxi.year));
-                        tabla.add(taxi.conductor.nombre);
-                        tabla.add(taxi.categoria);
-                        tabla.endOfRow();
-                    }
+                    tabla.add(taxi.placa);
+                    tabla.add(taxi.marca);
+                    tabla.add(taxi.modelo);
+                    tabla.add(to_string(taxi.year));
+                    tabla.add(taxi.conductor.nombre);
+                    tabla.add(taxi.categoria);
+                    tabla.endOfRow();
                 }
+            }
             cout << tabla;
             break;
 
         case 'f': // REPORTERÍA
+        {
             system("clear");
-            cout << "*********************************Reportes***********************************" << endl;
-            cout << "-----------------------------------------------------------------------------" << endl
-                 << endl;
-            cout << "Seleccione Una opcion Del menu que se presenta a continuacion:" << endl
-                 << endl;
-            cout << "a. -- Listado de viajes realizados por cada vehículo" << endl;
-            cout << "b. -- Listado de viajes realizados por un vehículo específico" << endl;
-            cout << "c. -- Ingresos totales obtenidos en un mes" << endl;
-            cout << "d. -- Ingresos totales obtenidos en un mes por un vehículo específico" << endl;
-            cout << "g. -- Salir\n"
-                 << endl;
-            cout << "Ingrese la opcion seleccionada: ";
-            break;
+            bool salirReportes = false;
+
+            do
+            {
+                cout << "*********************************Reportes***********************************" << endl;
+                cout << "-----------------------------------------------------------------------------" << endl
+                     << endl;
+                cout << "Seleccione Una opcion Del menu que se presenta a continuacion:" << endl
+                     << endl;
+                cout << "a. -- Listado de viajes realizados por cada vehículo" << endl;
+                cout << "b. -- Listado de viajes realizados por un vehículo específico" << endl;
+                cout << "c. -- Ingresos totales obtenidos en un mes" << endl;
+                cout << "d. -- Ingresos totales obtenidos en un mes por un vehículo específico" << endl;
+                cout << "x. -- Regresar a menú Principal\n"
+                     << endl;
+                cout << "Ingrese la opcion seleccionada: ";
+                cin >> menu2;
+
+                switch (menu2)
+                {
+                case 'a':
+                    // Código para opción a
+                    break;
+                case 'b':
+                    // Código para opción b
+                    break;
+                case 'c':
+                    // Código para opción c
+                    break;
+                case 'd':
+                    // Código para opción d
+                    break;
+                case 'x':
+                    system("clear");
+                    salirReportes = true;
+                    continuar = 's'; // Esto evita que pregunte nuevamente al salir
+                    break;
+                default:
+                    cout << "Opción no válida. Presione Enter para continuar...";
+                    cin.ignore();
+                    cin.get();
+                    system("clear");
+                    break;
+                }
+
+                if (!salirReportes && menu2 >= 'a' && menu2 <= 'd')
+                {
+                    cout << "\n\n¿Desea realizar otra operación en reportes? (s/n): ";
+                    char continuarReportes;
+                    cin >> continuarReportes;
+                    if (continuarReportes == 'n' || continuarReportes == 'N')
+                    {
+                        salirReportes = true;
+                    }
+                    system("clear");
+                }
+            } while (!salirReportes);
+
+            // Al salir del bucle de reportes, continuará con el bucle principal
+            continue; // Esto hace que salte directamente a la siguiente iteración del bucle principal
+            
+        }
+        break;
 
         case 'z': // SALIR
             system("clear");
@@ -644,7 +699,7 @@ int main()
             exit(0);
             break;
         }
-        cout << "\n \nDesea realizar otra operacion? Presione Cualquier Tecla, Salir presione n o N." << endl;
+        cout << "\n \n¿Desea realizar otra operacion? Presione Cualquier Tecla, Salir presione n o N." << endl;
         cin >> continuar;
         system("clear");
 

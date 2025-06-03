@@ -247,14 +247,15 @@ int main()
     string vehicleLabel[4] = {"1.Placa:", "2.Marca:", "3.Modelo:", "4.Año:"};
     string conductorLabel[4] = {"1.Documento de Identidad:", "2.Nombre Completo:", "3.Telefono/Cel:", "4.Dirección:"};
     string transacLabel[4] = {"Origen del viaje:", "Destino del viaje:", "Tarifa establecida:", "Fecha del viaje:"};
-    string placaReingreso;          // Placa para reingresar taxi a cola
     TextTable tabla('-', '|', '+'); // creacion de tabla con bordes y vacia
     // variables temporales
-    string temp;     // convertir año de vehiculo a tipo numerico
-    string temp2;    // convertir tarifa a float
-    string tempDia;  // obtener fecha de viaje
-    string tempMes;  // obtener fecha de viaje
-    string tempYear; // obtener fecha de viaje
+    string placaBuscada;         // Placa para reingresar taxi a cola y para buscar en reportes
+    string temp;                 // convertir año de vehiculo a tipo numerico
+    string temp2;                // convertir tarifa a float
+    string tempDia;              // obtener fecha de viaje
+    string tempMes;              // obtener fecha de viaje
+    string tempYear;             // obtener fecha de viaje
+    bool taxiEncontrado = false; // para buscar taxi
     cargarFlotaTaxis(listaTaxis, "CARS_STORAGE.txt");
     cargarTransacciones(transacciones, "TRANSACTION_LOG");
 
@@ -384,7 +385,7 @@ int main()
             case 'a': // Ejecutiva
             {
                 // Seleccionar Taxi
-                bool taxiEncontrado = false;
+                taxiEncontrado = false;
                 for (auto &taxi : listaTaxis)
                 {
                     if (taxi.categoria == "Ejecutiva" && taxi.estado == "Disponible")
@@ -547,8 +548,8 @@ int main()
             cout << "\n--- Ingrese la Placa del vehiculo que desea Reingresar a la Cola de espera ---" << endl;
             cout << "\n--- (sin espacios ni guiones) ---" << endl
                  << endl;
-            cin >> placaReingreso;
-            reingresarTaxi(listaTaxis, placaReingreso);
+            cin >> placaBuscada;
+            reingresarTaxi(listaTaxis, placaBuscada);
             break;
 
         case 'd': // CONSULTA VEHICULOS EN RUTA
@@ -625,7 +626,7 @@ int main()
             system("clear");
             bool salirReportes = false;
             string tarifaString;
-            unordered_set<string> placas_con_viajes; // Almacena placas con al menos 1 viaje
+            unordered_set<string> placas_con_viajes; // Almacena placas con al menos 1 viaje(contenedor aux con tabla hash)
             do
             {
                 cout << "*********************************Reportes***********************************" << endl;
@@ -644,20 +645,19 @@ int main()
 
                 switch (menu2)
                 {
-                case 'a':
-
+                case 'a': // viajes realizados por cada vehículo (Todos los vehículos)
                     system("clear");
                     cout << "*************************************************************************************\n";
                     cout << "\n--- *Viajes realizados por cada vehículo* ---" << endl
                          << endl;
 
-                    // Paso 1: Identificar todas las placas que tienen viajes
+                    // recorrer transacciones
                     for (const auto &viaje : transacciones)
                     {
-                        placas_con_viajes.insert(viaje.placa); // Si la placa ya está, no se duplica
+                        placas_con_viajes.insert(viaje.placa); // inserta en tabla hash de apoyo la placa encontrada solo UNA VEZ(descarta repetidos)
                     }
 
-                    // Paso 2: Mostrar solo taxis con viajes
+                    // Mostrar solo taxis con viajes
                     for (const auto &taxi : listaTaxis)
                     {
                         // Si el taxi NO tiene viajes, lo saltamos
@@ -669,10 +669,10 @@ int main()
                         // Mostrar info del taxi (solo si tiene viajes)
                         cout << "Viajes realizados por Taxi con placas: " << taxi.placa << endl;
                         cout << "Conductor: " << taxi.conductor.nombre << endl;
+                        cout << "Categoría: " << taxi.categoria << endl;
 
                         // Crear tabla para los viajes de ESTE taxi
                         TextTable tabla('-', '|', '+');
-                        tabla.add("Categoria");
                         tabla.add("       Ruta");
                         tabla.add("Tarifa");
                         tabla.add("Fecha");
@@ -683,9 +683,10 @@ int main()
                         {
                             if (viaje.placa == taxi.placa)
                             {
-                                tabla.add(taxi.categoria);
                                 tabla.add(viaje.origenDestino);
-                                tabla.add(to_string(viaje.tarifa)); // Usa tu función para 2 decimales
+                                tarifaString = to_string(viaje.tarifa);                            // convierte float en string
+                                tarifaString = tarifaString.substr(0, tarifaString.find('.') + 3); // convierte float en string
+                                tabla.add(tarifaString);
                                 tabla.add(viaje.fechaViaje);
                                 tabla.endOfRow();
                             }
@@ -696,8 +697,70 @@ int main()
                     }
 
                     break;
-                case 'b':
-                    // Código para opción b
+                case 'b':                             // viajes realizados por un vehículo específico
+                    tabla = TextTable('-', '|', '+'); // resetea la tabla
+                    temp2 = "";                       // reset variable a utilizarse
+                    taxiEncontrado = false;           // reset variable a utilizarse
+                    system("clear");
+                    cout << "*************************************************************************************\n";
+                    cout << "\n--- Ingrese la Placa del vehiculo que desea Buscar para generar Reporte ---" << endl;
+                    cout << "\n--- (sin espacios ni guiones) ---" << endl
+                         << endl;
+                    cin >> placaBuscada;
+                    for (auto &taxi : listaTaxis)
+                    {
+                        if (taxi.placa == placaBuscada)
+                        {
+                            for (auto &viaje : transacciones)
+                            {
+                                if (viaje.placa == placaBuscada)
+                                {
+                                    temp2 = taxi.conductor.nombre;
+                                    taxiEncontrado = true;
+                                }
+                            }
+                        }
+                    }
+
+                    if (taxiEncontrado)
+                    {
+                        system("clear");
+                        cout << "*************************************************************************************\n";
+                        cout << "\n--- *Viajes realizados por vehiculo con placas: " << placaBuscada << "* ---" << endl
+                             << endl;
+                        tabla.add("       Ruta");
+                        tabla.add("Tarifa");
+                        tabla.add("Fecha");
+                        tabla.endOfRow();
+
+                        // inicia impresion de Datos
+                        cout << "--- *Conductor: " << temp2 << "* ---" << endl
+                             << endl;
+                        for (auto &viaje : transacciones)
+                        {
+                            if (viaje.placa == placaBuscada)
+                            {
+
+                                tabla.add(viaje.origenDestino);
+                                tarifaString = to_string(viaje.tarifa);                            // convierte float en string
+                                tarifaString = tarifaString.substr(0, tarifaString.find('.') + 3); // convierte float en string
+                                tabla.add(tarifaString);
+                                tabla.add(viaje.fechaViaje);
+                                tabla.endOfRow();
+                            }
+                        }
+
+                        cout << tabla << endl
+                             << endl;
+                    }
+                    else
+                    {
+                        system("clear");
+                        cout << "*************************************************************************************\n";
+                        cout << "NO SE ENCONTRARON REGISTROS PARA LA CONSULTA SOLICITADA. Placa: " << placaBuscada << "* ---" << endl
+                             << endl;
+                    }
+
                     break;
                 case 'c':
                     // Código para opción c

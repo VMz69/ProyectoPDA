@@ -1,17 +1,4 @@
 # Vehiculo
-P456
-Toyota
-Corolla
-2010
-Tradicional
-En ruta
-# Conductor
-0123456789
-Jose Roberto Jimenez Sanchez
-7788-9132
-Soyapango
-
-# Vehiculo
 P654
 Honda
 Civic
@@ -30,7 +17,7 @@ Toyota
 Yaris
 2013
 Tradicional
-Disponible
+En ruta
 # Conductor
 0123456789
 Henry Mauricio Peña
@@ -56,7 +43,7 @@ Hiundai
 Accent
 2016
 Ejecutiva
-Disponible
+En ruta
 # Conductor
 01234564789
 Juan Alexander Lopez Gonzalez
@@ -153,4 +140,30 @@ Disponible
 Francisco Antonio Velasco Martinez
 7954-9785
 Cojutepeque
+
+# Vehiculo
+P7710
+Toyota
+Camry
+2012
+Tradicional
+Disponible
+# Conductor
+0123456789
+Farid Ricardo Gonzalez
+7710-6200
+Ilopngo
+
+# Vehiculo
+P456
+Toyota
+Corolla
+2010
+Tradicional
+Disponible
+# Conductor
+0123456789
+Jose Roberto Jimenez Sanchez
+7788-9132
+Soyapango
 

@@ -232,13 +232,8 @@ void reingresarTaxi(vector<Vehiculo> &listaTaxis, const string &placaBuscada)
 
 void gananciasMesY(vector<Transaction> &viajes, string &yearMes)
 {
+    bool existeTransaccion = false;
     string fechaFormateada = "MES: " + yearMes.substr(6, 7) + " DEL AÑO " + yearMes.substr(0, 4); // Extrae Año y mes y reordena a mes - Año
-
-    system("clear");
-    cout << "*******************************************************************\n";
-    cout << "REPORTE DE INGRESOS PARA EL MES: " << fechaFormateada << "\n";
-    cout << "*******************************************************************\n\n";
-
     float total = 0.0;
 
     for (const auto &viaje : viajes)
@@ -247,11 +242,64 @@ void gananciasMesY(vector<Transaction> &viajes, string &yearMes)
         if (fecha == yearMes)
         {
             total += viaje.tarifa;
+            existeTransaccion = true;
         }
     }
 
-    cout << fixed << setprecision(2);
-    cout << "Total de ingresos para el " << fechaFormateada << " :    $" << total << "\n";
+    if (existeTransaccion)
+    {
+        system("clear");
+        cout << "*******************************************************************\n";
+        cout << "REPORTE DE INGRESOS PARA EL MES: " << fechaFormateada << "\n";
+        cout << "*******************************************************************\n\n";
+        cout << fixed << setprecision(2);
+        cout << "Total de ingresos para el " << fechaFormateada << " :    $" << total << "\n";
+    }
+    else
+    {
+        system("clear");
+        cout << "*************************************************************************************\n";
+        cout << "NO SE ENCONTRARON REGISTROS PARA LA CONSULTA SOLICITADA: " << fechaFormateada << "* ---" << endl
+             << endl;
+    }
+}
+
+void gananciasMesYearPlaca(vector<Transaction> &viajes, string &yearMes, string &placa)
+{
+    bool existeTransaccion = false;
+    string fechaFormateada = "MES: " + yearMes.substr(6, 7) + " DEL AÑO " + yearMes.substr(0, 4); // Extrae Año y mes y reordena a mes - Año
+    float total = 0.0;
+
+    for (const auto &viaje : viajes)
+    {
+        if (viaje.placa == placa)
+        {
+            string fecha = viaje.fechaViaje.substr(0, 7); // Extrae "YYYY-MM"
+            if (fecha == yearMes)
+            {
+                total += viaje.tarifa;
+                existeTransaccion = true;
+            }
+        }
+    }
+
+    if (existeTransaccion)
+    {
+        system("clear");
+        cout << "*******************************************************************\n";
+        cout << "REPORTE DE INGRESOS PARA EL MES: " << fechaFormateada << "\n";
+        cout << "PLACA: " << placa << "\n";
+        cout << "*******************************************************************\n\n";
+        cout << fixed << setprecision(2);
+        cout << "Total de ingresos para el vehiculo placas: " << placa << " :    $" << total << "\n";
+    }
+    else
+    {
+        system("clear");
+        cout << "*************************************************************************************\n";
+        cout << "NO SE ENCONTRARON REGISTROS PARA LA CONSULTA SOLICITADA. Placa: " << placa << "* ---" << endl
+             << endl;
+    }
 }
 
 //**************************************************************************************************************************//
@@ -786,7 +834,7 @@ int main()
                     }
 
                     break;
-                case 'c':
+                case 'c':          // Ingresos totales obtenidos en un mes (especificado al generar el reporte).
                     tempYear = ""; // reset variables a utilizar
                     tempMes = "";
                     temp2 = "";
@@ -801,11 +849,31 @@ int main()
                     cin >> tempYear;
                     temp2 = tempYear + "-" + tempMes; // formamos el mesYear para la consulta
 
-                    gananciasMesY(transacciones, temp2);
+                    gananciasMesY(transacciones, temp2); // envia datos a la funcion y ella se encarga de todo.
 
                     break;
-                case 'd':
-                    // Código para opción d
+                case 'd':          // Ingresos totales obtenidos en un mes por un vehículo específico
+                    tempYear = ""; // reset variables a utilizar
+                    tempMes = "";
+                    temp2 = "";
+                    placaBuscada = "";
+                    system("clear");
+                    cout << "****************Ingresos totales obtenidos en un mes por vehiculo****************\n";
+                    cout << "\n--- Ingrese el mes año y placa que desea Buscar para generar Reporte ---" << endl;
+                    cout << "\n \nMes: ___      Año: _____       |       Formato Requerido: 00 0000" << endl;
+                    cout << "\n \nPlaca: _________________       |       Formato Requerido: Sin guiones ni espacios" << endl;
+
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // limpiar el buffer
+                    gotoxy(7, 6);
+                    cin >> tempMes;
+                    gotoxy(21, 6);
+                    cin >> tempYear;
+                    temp2 = tempYear + "-" + tempMes; // formamos el mesYear para la consulta
+                    gotoxy(10, 9);
+                    cin >> placaBuscada;
+
+                    gananciasMesYearPlaca(transacciones, temp2, placaBuscada); // envia datos a la funcion y ella se encarga de todo.
+
                     break;
                 case 'x':
                     system("clear");
@@ -851,7 +919,7 @@ int main()
             exit(0);
             break;
         }
-        cout << "\n \n¿Desea realizar otra operacion? Presione Cualquier Tecla, Salir presione n o N." << endl;
+        cout << "\n \n¿Desea realizar otra operacion en el sistema? Presione Cualquier Tecla, Salir presione n o N." << endl;
         cin >> continuar;
         system("clear");
 

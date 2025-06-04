@@ -9,7 +9,6 @@
 #include <ctime>         //libreria para manejar hora
 #include <sstream>       //libreria para manejar hora
 #include <unordered_set> // almacena elementos únicos sin orden específico,
-//#include "Textable.h"
 #include "Structs_utils.h"
 // #include <windows.h> //header para mover cursor en Windows
 using namespace std;

@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <iomanip>  //header para convertir float a 2 cifras
-#include <unistd.h> //header para mover cursor en Linux
 #include <limits>
 #include <fstream>
 #include <filesystem>
@@ -10,7 +9,7 @@
 #include <sstream>       //libreria para manejar hora
 #include <unordered_set> // almacena elementos únicos sin orden específico,
 #include "Structs_utils.h"
-// #include <windows.h> //header para mover cursor en Windows
+
 using namespace std;
 
 //**************************************************************************************************************************//
@@ -42,7 +41,7 @@ int main()
     cargarFlotaTaxis(listaTaxis, "CARS_STORAGE.txt");
     cargarTransacciones(transacciones, "TRANSACTION_LOG");
 
-    system("clear");
+    limpiarPantalla();
     do
     {
         cout << "BIENVENIDO AL SISTEMA DE GESTION DE TAXIS 'TRUE-DRIVER'!" << endl;
@@ -66,7 +65,7 @@ int main()
         switch (menu)
         {
         case 'a': // REGISTRO DE TAXIS NUEVOS + CONDUCTORES
-            system("clear");
+            limpiarPantalla();
             cout << "**********************************************************************\n";
             cout << "Ingreso de nuevo Vehiculo.\n";
 
@@ -116,7 +115,7 @@ int main()
             }
 
             // INGRESO DE CONDUCTOR ASOCIADO
-            system("clear");
+            limpiarPantalla();
             cout << "**********************************************************************\n";
             cout << "\n<<<Registro de Conductor Asociado a taxi con Placas>>> " << "<<" << taxi.placa << ">>\n";
             cout << "---------------------------------------------------------------------- \n";
@@ -143,7 +142,7 @@ int main()
             listaTaxis.push_back(taxi);                      // subimos el taxi guardado al vector
             guardarVehiculo(listaTaxis, "CARS_STORAGE.txt"); // agregamos el vector actualizado al archivo txt
 
-            system("clear");
+            limpiarPantalla();
             cout << "**********************************************************************\n";
             cout << "Nuevo Taxi registrado nexitosamente." << endl;
             cout << "Placas:        " << taxi.placa << endl;
@@ -153,7 +152,7 @@ int main()
 
         case 'b': // REGISTRO DE VIAJES
 
-            system("clear");
+            limpiarPantalla();
             cout << "Seleccione la categoría del Taxi Solicitado por cliente:" << endl;
 
             cout << "\n \t • a. \t Ejecutiva";
@@ -173,7 +172,7 @@ int main()
                 {
                     if (taxi.categoria == "Ejecutiva" && taxi.estado == "Disponible")
                     {
-                        system("clear");
+                        limpiarPantalla();
                         cout << "**********************************************************************\n";
                         cout << "\n<<<Asignacion de viaje para vehiculo con placas>>> " << "<<" << taxi.placa << ">>\n";
                         cout << "\n<<<Conductor:>>> " << "<<" << taxi.conductor.nombre << ">>\n";
@@ -231,7 +230,7 @@ int main()
 
                 // Bucle que imprime cada transacción //SOLO PARA CONTROL DE DATOS PROCESADOS
 
-                system("clear");
+                limpiarPantalla();
                 cout << "**********************************************************************\n";
                 cout << "\n--- Datos del Viaje Registrado---" << endl;
                 cout << "Placa: " << viaje.placa << endl;
@@ -252,7 +251,7 @@ int main()
                 {
                     if (taxi.categoria == "Tradicional" && taxi.estado == "Disponible")
                     {
-                        system("clear");
+                        limpiarPantalla();
                         cout << "**********************************************************************\n";
                         cout << "\n<<<Asignacion de viaje para vehiculo con placas>>> " << "<<" << taxi.placa << ">>\n";
                         cout << "\n<<<Conductor:>>> " << "<<" << taxi.conductor.nombre << ">>\n";
@@ -310,7 +309,7 @@ int main()
 
                 // Bucle que imprime cada transacción //SOLO PARA CONTROL DE DATOS PROCESADOS
 
-                system("clear");
+                limpiarPantalla();
                 cout << "**********************************************************************\n";
                 cout << "\n--- Datos del Viaje Registrado---" << endl;
                 cout << "Placa: " << viaje.placa << endl;
@@ -326,7 +325,7 @@ int main()
             break;
 
         case 'c': // REINGRESO DE TAXI A BASE
-            system("clear");
+            limpiarPantalla();
             cout << "*************************************************************************************\n";
             cout << "\n--- Ingrese la Placa del vehiculo que desea Reingresar a la Cola de espera ---" << endl;
             cout << "\n--- (sin espacios ni guiones) ---" << endl
@@ -336,7 +335,7 @@ int main()
             break;
 
         case 'd': // CONSULTA VEHICULOS EN RUTA
-            system("clear");
+            limpiarPantalla();
             cout << "*************************************************************************************\n";
             cout << "\n--- *Vehiculos En Ruta* ---" << endl
                  << endl;
@@ -375,7 +374,7 @@ int main()
             break;
 
         case 'e': // CONSULTA VEHICULOS DISPONIBLES
-            system("clear");
+            limpiarPantalla();
             cout << "*************************************************************************************\n";
             cout << "\n--- *Vehiculos Disponibles para viaje* ---" << endl
                  << endl;
@@ -406,7 +405,7 @@ int main()
 
         case 'f': // REPORTERÍA
         {
-            system("clear");
+            limpiarPantalla();
             bool salirReportes = false;
             string tarifaString;
             unordered_set<string> placas_con_viajes; // Almacena placas con al menos 1 viaje(contenedor aux con tabla hash)
@@ -429,7 +428,7 @@ int main()
                 switch (menu2)
                 {
                 case 'a': // viajes realizados por cada vehículo (Todos los vehículos)
-                    system("clear");
+                    limpiarPantalla();
                     cout << "*************************************************************************************\n";
                     cout << "\n--- *Viajes realizados por cada vehículo* ---" << endl
                          << endl;
@@ -484,7 +483,7 @@ int main()
                     tabla = TextTable('-', '|', '+'); // resetea la tabla
                     temp2 = "";                       // reset variable a utilizarse
                     taxiEncontrado = false;           // reset variable a utilizarse
-                    system("clear");
+                    limpiarPantalla();
                     cout << "*************************************************************************************\n";
                     cout << "\n--- Ingrese la Placa del vehiculo que desea Buscar para generar Reporte ---" << endl;
                     cout << "\n--- (sin espacios ni guiones) ---" << endl
@@ -507,7 +506,7 @@ int main()
 
                     if (taxiEncontrado)
                     {
-                        system("clear");
+                        limpiarPantalla();
                         cout << "*************************************************************************************\n";
                         cout << "\n--- *Viajes realizados por vehiculo con placas: " << placaBuscada << "* ---" << endl
                              << endl;
@@ -538,7 +537,7 @@ int main()
                     }
                     else
                     {
-                        system("clear");
+                        limpiarPantalla();
                         cout << "*************************************************************************************\n";
                         cout << "NO SE ENCONTRARON REGISTROS PARA LA CONSULTA SOLICITADA. Placa: " << placaBuscada << "* ---" << endl
                              << endl;
@@ -549,7 +548,7 @@ int main()
                     tempYear = ""; // reset variables a utilizar
                     tempMes = "";
                     temp2 = "";
-                    system("clear");
+                    limpiarPantalla();
                     cout << "********************Ingresos totales obtenidos en un mes********************\n";
                     cout << "\n--- Ingrese el mes y el año que desea Buscar para generar Reporte ---" << endl;
                     cout << "\n \nMes: ___      Año: _____       |       Formato Requerido: 00 0000" << endl;
@@ -568,7 +567,7 @@ int main()
                     tempMes = "";
                     temp2 = "";
                     placaBuscada = "";
-                    system("clear");
+                    limpiarPantalla();
                     cout << "****************Ingresos totales obtenidos en un mes por vehiculo****************\n";
                     cout << "\n--- Ingrese el mes año y placa que desea Buscar para generar Reporte ---" << endl;
                     cout << "\n \nMes: ___      Año: _____       |       Formato Requerido: 00 0000" << endl;
@@ -587,7 +586,7 @@ int main()
 
                     break;
                 case 'x':
-                    system("clear");
+                    limpiarPantalla();
                     salirReportes = true;
                     continuar = 's'; // Esto evita que pregunte nuevamente al salir
                     break;
@@ -595,7 +594,7 @@ int main()
                     cout << "Opción no válida. Presione Enter para continuar...";
                     cin.ignore();
                     cin.get();
-                    system("clear");
+                    limpiarPantalla();
                     break;
                 }
 
@@ -608,7 +607,7 @@ int main()
                     {
                         salirReportes = true;
                     }
-                    system("clear");
+                    limpiarPantalla();
                 }
             } while (!salirReportes);
 
@@ -618,7 +617,7 @@ int main()
         break;
 
         case 'z': // SALIR
-            system("clear");
+            limpiarPantalla();
             cout << " " << endl;
             cout << " " << endl;
             cout << " " << endl;
@@ -632,7 +631,7 @@ int main()
         }
         cout << "\n \n¿Desea realizar otra operacion en el sistema? Presione Cualquier Tecla, Salir presione n o N." << endl;
         cin >> continuar;
-        system("clear");
+        limpiarPantalla();
 
     } while (continuar != 'n' && continuar != 'N');
     cout << "Gracias por utilizar el sistema..." << endl

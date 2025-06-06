@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
-#include <iomanip>  //header para convertir float a 2 cifras
-#include <unistd.h> //header para mover cursor en Linux
+#include <iomanip> //header para convertir float a 2 cifras
 #include <limits>
 #include <fstream>
 #include <filesystem>
@@ -10,8 +9,20 @@
 #include <sstream>       //libreria para manejar hora
 #include <unordered_set> // almacena elementos únicos sin orden específico,
 #include "Textable.h"
-
-// #include <windows.h> //header para mover cursor en Windows
+// Directivas Condicionales
+#ifdef _WIN32
+    // Código solo para Windows
+    #include <windows.h>
+    void limpiarPantalla() {
+        system("cls");
+    }
+#else
+    // Código para Linux/Mac
+    #include <unistd.h>
+    void limpiarPantalla() {
+        system("clear");
+    }
+#endif
 //**************************************************************************************************************************//
 //-ESTRUCTURAS--------------------------------------------------------------------------------------------------------------//
 //**************************************************************************************************************************//
@@ -52,7 +63,14 @@ struct Transaction
 // la funcion GOTOXY cambia de a Linux y Windows(en este caso se esta utilizando la funcion para Linux)
 void gotoxy(int x, int y)
 {
-    cout << "\033[" << y << ";" << x << "H";
+#ifdef _WIN32 // funcion para Windows
+    COORD coord;
+    coord.X = x;
+    coord.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+#else
+    cout << "\033[" << y << ";" << x << "H"; // Funcion para linux
+#endif
 }
 
 std::string obtenerHoraActual()
@@ -221,7 +239,7 @@ void reingresarTaxi(vector<Vehiculo> &listaTaxis, const string &placaBuscada)
             listaTaxis.erase(listaTaxis.begin() + i); // Eliminar
             listaTaxis.push_back(taxiReingresado);    // Agregar al final
             guardarVehiculo(listaTaxis, "CARS_STORAGE.txt");
-            system("clear");
+            limpiarPantalla();
             cout << "**********************************************************************************\n";
             cout << "Taxi con placa " << placaBuscada << " reingresado como Disponible y enviado al final de la cola.\n";
             taxiEncontrado = true;
@@ -230,7 +248,7 @@ void reingresarTaxi(vector<Vehiculo> &listaTaxis, const string &placaBuscada)
     }
     if (!taxiEncontrado)
     {
-        system("clear");
+        limpiarPantalla();
         cout << "**************************************************************************************\n";
         cout << "El Taxi " << placaBuscada << " no coincide con Registros. o ya se encuentra en base y Disponible";
     }
@@ -254,7 +272,7 @@ void gananciasMesY(vector<Transaction> &viajes, string &yearMes)
 
     if (existeTransaccion)
     {
-        system("clear");
+        limpiarPantalla();
         cout << "*******************************************************************\n";
         cout << "REPORTE DE INGRESOS PARA EL MES: " << fechaFormateada << "\n";
         cout << "*******************************************************************\n\n";
@@ -263,7 +281,7 @@ void gananciasMesY(vector<Transaction> &viajes, string &yearMes)
     }
     else
     {
-        system("clear");
+        limpiarPantalla();
         cout << "*************************************************************************************\n";
         cout << "NO SE ENCONTRARON REGISTROS PARA LA CONSULTA SOLICITADA: " << fechaFormateada << "* ---" << endl
              << endl;
@@ -291,7 +309,7 @@ void gananciasMesYearPlaca(vector<Transaction> &viajes, string &yearMes, string 
 
     if (existeTransaccion)
     {
-        system("clear");
+        limpiarPantalla();
         cout << "*******************************************************************\n";
         cout << "REPORTE DE INGRESOS PARA EL MES: " << fechaFormateada << "\n";
         cout << "PLACA: " << placa << "\n";
@@ -301,7 +319,7 @@ void gananciasMesYearPlaca(vector<Transaction> &viajes, string &yearMes, string 
     }
     else
     {
-        system("clear");
+        limpiarPantalla();
         cout << "*************************************************************************************\n";
         cout << "NO SE ENCONTRARON REGISTROS PARA LA CONSULTA SOLICITADA. Placa: " << placa << "* ---" << endl
              << endl;

@@ -54,6 +54,7 @@ struct Transaction
     float tarifa;
     string fechaViaje;
     string hora;
+    //bool finalizado; //implementación futura para tomar en cuenta en reporte de viajes realizados y filtrar por esta condición
 };
 
 //**************************************************************************************************************************//
